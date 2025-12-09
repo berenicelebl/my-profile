@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Interactif - Bérénice Lebleu</title>
+    <meta name="description" content="Dashboard interactif avec statistiques et graphiques">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Raleway:wght@400;600&family=Roboto:ital,wght@0,100;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/a056c69b4f.js" crossorigin="anonymous"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="dashboard.css">
+</head>
+<body>
+    <!-- Header / Navigation -->
+    <header class="dashboard-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-chart-line"></i>
+                <h1>Dashboard Interactif</h1>
+            </div>
+            <nav class="main-nav">
+                <a href="berenice_wagon.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="#" class="active"><i class="fas fa-chart-bar"></i> Dashboard</a>
+                <a href="#stats"><i class="fas fa-poll"></i> Statistiques</a>
+                <a href="#charts"><i class="fas fa-chart-pie"></i> Graphiques</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="dashboard-container">
+
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <h2>Bienvenue sur votre Dashboard</h2>
+            <p>Suivez vos statistiques et performances en temps réel</p>
+            <div class="date-filter">
+                <label for="period-select">Période :</label>
+                <select id="period-select">
+                    <option value="today">Aujourd'hui</option>
+                    <option value="week" selected>Cette semaine</option>
+                    <option value="month">Ce mois</option>
+                    <option value="year">Cette année</option>
+                </select>
+                <button id="refresh-btn" class="btn-refresh">
+                    <i class="fas fa-sync-alt"></i> Actualiser
+                </button>
+            </div>
+        </section>
+
+        <!-- Stats Cards -->
+        <section id="stats" class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card card-blue">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Visiteurs</h3>
+                        <p class="stat-number" data-target="15847">0</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +12.5%
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-green">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Revenus</h3>
+                        <p class="stat-number" data-target="48650">0</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +8.3%
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-orange">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Commandes</h3>
+                        <p class="stat-number" data-target="3254">0</p>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> +5.7%
+                        </span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-red">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Satisfaction</h3>
+                        <p class="stat-number" data-target="96">0</p>
+                        <span class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> -1.2%
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="charts" class="charts-section">
+            <div class="charts-grid">
+
+                <!-- Line Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-area"></i> Évolution des Ventes</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn active" data-chart="sales" data-type="line">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
+                            <button class="chart-btn" data-chart="sales" data-type="bar">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pie Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Répartition des Catégories</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="chart-card full-width">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-globe"></i> Visiteurs par Pays</h3>
+                        <div class="chart-legend">
+                            <span class="legend-item">
+                                <span class="legend-color" style="background: #F55050;"></span>
+                                Desktop
+                            </span>
+                            <span class="legend-item">
+                                <span class="legend-color" style="background: #627b8e;"></span>
+                                Mobile
+                            </span>
+                        </div>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="countriesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-mobile-alt"></i> Sources de Trafic</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                    <div class="chart-footer">
+                        <div class="traffic-stats">
+                            <div class="traffic-item">
+                                <span class="traffic-label">Direct</span>
+                                <span class="traffic-value">42%</span>
+                            </div>
+                            <div class="traffic-item">
+                                <span class="traffic-label">Recherche</span>
+                                <span class="traffic-value">35%</span>
+                            </div>
+                            <div class="traffic-item">
+                                <span class="traffic-label">Réseaux</span>
+                                <span class="traffic-value">23%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radar Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-bullseye"></i> Performance</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table Section -->
+        <section class="table-section">
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fas fa-table"></i> Dernières Transactions</h3>
+                    <div class="table-actions">
+                        <input type="text" id="search-input" placeholder="Rechercher..." class="search-input">
+                        <button class="btn-export">
+                            <i class="fas fa-download"></i> Exporter
+                        </button>
+                    </div>
+                </div>
+                <div class="table-body">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Produit</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-content">
+                            <!-- Generated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-pagination">
+                    <button class="pagination-btn" id="prev-page">
+                        <i class="fas fa-chevron-left"></i> Précédent
+                    </button>
+                    <span id="page-info">Page 1 sur 5</span>
+                    <button class="pagination-btn" id="next-page">
+                        Suivant <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Feed -->
+        <section class="activity-section">
+            <div class="activity-card">
+                <div class="activity-header">
+                    <h3><i class="fas fa-bell"></i> Activité Récente</h3>
+                    <button class="btn-clear">Tout marquer comme lu</button>
+                </div>
+                <div class="activity-feed" id="activity-feed">
+                    <!-- Generated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>© 2025 Bérénice Lebleu - Dashboard Interactif</p>
+            <div class="footer-links">
+                <a href="berenice_wagon.html">Retour au profil</a>
+                <a href="https://www.linkedin.com/in/bérénice-lebleu-37b725251/" target="_blank">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="https://www.instagram.com/berenice_lebl/?hl=fr" target="_blank">
+                    <i class="fab fa-instagram"></i> Instagram
+                </a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script src="dashboard.js"></script>
+</body>
+</html>
