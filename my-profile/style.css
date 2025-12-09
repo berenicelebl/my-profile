@@ -3,7 +3,7 @@ body {
 	color: white;
 	font-size: 22px;
 	line-height: 1.6;
-	letter-spacing: 2,5px;
+	letter-spacing: 2.5px;
 	font-weight: normal;
 	font-family: 'Lora';
 	text-align: center;
@@ -30,7 +30,6 @@ h1 {
 h2 {
 	color: #404258;
 	font-size: 25px;
-	font-weight: lighter;
 	font-weight: 700;
 }
 
@@ -44,7 +43,6 @@ a {
 
 a:hover {
 	color: #F48484;
-	font-weight: bold;
 	font-weight: 600;
 	font-family: 'Roboto', sans-serif;
 	font-size: 16px;
@@ -57,21 +55,6 @@ div {
 	box-shadow: 0px 10px 30px rgb(0 0 0 / 20%);
 	border-radius: 5px;
 
-}
-
-div style {
-	width: 700px;
-	margin: 40px auto;
-}
-
-<div style="
-  width: 700px;
-  margin: 40px auto;
-"></div>
-
-element.style {
-	width: 700px;
-	margin: 40px auto;
 }
 
 .container {
@@ -133,12 +116,8 @@ element.style {
 	color: #d06969;
 }
 
-.selector {
-	property: value;
-}
-
 ul {
-	color: #F48484; #89a8be 
+	color: #F48484;
 }
 
 .card-white {
