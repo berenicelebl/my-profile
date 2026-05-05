@@ -1,0 +1,104 @@
+{
+  "name": "fg_NotifyCaptainOnRequest",
+  "properties": {
+    "displayName": "FireGear – Notify Captain on New Request",
+    "description": "Triggered when a firefighter submits a new equipment request. Sends an in-app and email notification to all Captains.",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "triggers": {
+        "When_a_row_is_added": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 1,
+              "subscriptionRequest/entityname": "fg_request",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "fg_status"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Get_Firefighter_record": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "fg_firefighters",
+              "recordId": "@{triggerOutputs()?['body/fg_firefighterid']}"
+            }
+          },
+          "runAfter": {}
+        },
+        "Get_Equipment_record": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "fg_equipment",
+              "recordId": "@{triggerOutputs()?['body/fg_equipmentid']}"
+            }
+          },
+          "runAfter": {}
+        },
+        "List_all_Captains": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "entityName": "fg_firefighters",
+              "$filter": "fg_role eq 100000001 and fg_status eq 100000000"
+            }
+          },
+          "runAfter": {
+            "Get_Firefighter_record": ["Succeeded"],
+            "Get_Equipment_record": ["Succeeded"]
+          }
+        },
+        "For_each_Captain": {
+          "type": "Foreach",
+          "foreach": "@outputs('List_all_Captains')?['body/value']",
+          "actions": {
+            "Send_email_to_Captain": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "parameters": {
+                  "emailMessage/To": "@{items('For_each_Captain')?['fg_email']}",
+                  "emailMessage/Subject": "[FireGear] New equipment request – @{outputs('Get_Firefighter_record')?['body/fg_fullname']}",
+                  "emailMessage/Body": "<p>Hello @{items('For_each_Captain')?['fg_fullname']},</p><p>A new equipment request has been submitted and requires your attention.</p><table><tr><td><strong>Firefighter:</strong></td><td>@{outputs('Get_Firefighter_record')?['body/fg_fullname']}</td></tr><tr><td><strong>Equipment:</strong></td><td>@{outputs('Get_Equipment_record')?['body/fg_equipmentname']}</td></tr><tr><td><strong>Quantity:</strong></td><td>@{triggerOutputs()?['body/fg_quantityrequested']}</td></tr><tr><td><strong>Justification:</strong></td><td>@{triggerOutputs()?['body/fg_justification']}</td></tr><tr><td><strong>Submitted:</strong></td><td>@{triggerOutputs()?['body/fg_requestdate']}</td></tr></table><p>Please review and approve or reject the request in the <strong>Command Dashboard</strong>.</p><p>FireGear Inventory System</p>",
+                  "emailMessage/Importance": "High"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "List_all_Captains": ["Succeeded"]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.0.0.0031" SolutionPackageVersion="9.1" languagecode="1033"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Entities>
+
+    <!-- ============================================================ -->
+    <!-- TABLE 1: Firefighter                                          -->
+    <!-- ============================================================ -->
+    <Entity>
+      <Name LocalizedName="Firefighter" OriginalName="Firefighter">fg_firefighter</Name>
+      <EntityInfo>
+        <entity Name="fg_firefighter">
+          <LocalizedNames>
+            <LocalizedName description="Firefighter" languagecode="1033" />
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Firefighters" languagecode="1033" />
+          </LocalizedCollectionNames>
+          <Descriptions>
+            <Description description="Stores firefighter records for the station." languagecode="1033" />
+          </Descriptions>
+          <attributes>
+            <!-- Primary key (autonumber) -->
+            <attribute PhysicalName="fg_firefighterid">
+              <Type>primarykey</Type>
+              <Name>fg_firefighterid</Name>
+              <LogicalName>fg_firefighterid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+            </attribute>
+            <!-- Full Name -->
+            <attribute PhysicalName="fg_fullname">
+              <Type>nvarchar</Type>
+              <Name>fg_fullname</Name>
+              <LogicalName>fg_fullname</LogicalName>
+              <DisplayMasks>ValidForAdvancedFind ValidForForm ValidForGrid</DisplayMasks>
+              <MaxLength>100</MaxLength>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Full Name" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Badge Number -->
+            <attribute PhysicalName="fg_badgenumber">
+              <Type>nvarchar</Type>
+              <Name>fg_badgenumber</Name>
+              <LogicalName>fg_badgenumber</LogicalName>
+              <MaxLength>50</MaxLength>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Badge Number" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Role (Choice) -->
+            <attribute PhysicalName="fg_role">
+              <Type>picklist</Type>
+              <Name>fg_role</Name>
+              <LogicalName>fg_role</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Role" languagecode="1033" />
+              </LocalizedNames>
+              <optionset>
+                <options>
+                  <option value="100000000"><Labels><Label description="Firefighter" languagecode="1033" /></Labels></option>
+                  <option value="100000001"><Labels><Label description="Captain" languagecode="1033" /></Labels></option>
+                  <option value="100000002"><Labels><Label description="Admin" languagecode="1033" /></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+            <!-- Email -->
+            <attribute PhysicalName="fg_email">
+              <Type>nvarchar</Type>
+              <Name>fg_email</Name>
+              <LogicalName>fg_email</LogicalName>
+              <MaxLength>200</MaxLength>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Email" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Status (Choice) -->
+            <attribute PhysicalName="fg_status">
+              <Type>picklist</Type>
+              <Name>fg_status</Name>
+              <LogicalName>fg_status</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Status" languagecode="1033" />
+              </LocalizedNames>
+              <optionset>
+                <options>
+                  <option value="100000000"><Labels><Label description="Active" languagecode="1033" /></Labels></option>
+                  <option value="100000001"><Labels><Label description="Off-boarded" languagecode="1033" /></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+            <!-- Onboarding Date -->
+            <attribute PhysicalName="fg_onboardingdate">
+              <Type>datetime</Type>
+              <Name>fg_onboardingdate</Name>
+              <LogicalName>fg_onboardingdate</LogicalName>
+              <Format>DateOnly</Format>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Onboarding Date" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ============================================================ -->
+    <!-- TABLE 2: Equipment Catalogue                                  -->
+    <!-- ============================================================ -->
+    <Entity>
+      <Name LocalizedName="Equipment" OriginalName="Equipment">fg_equipment</Name>
+      <EntityInfo>
+        <entity Name="fg_equipment">
+          <LocalizedNames>
+            <LocalizedName description="Equipment" languagecode="1033" />
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Equipment Catalogue" languagecode="1033" />
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="fg_equipmentid">
+              <Type>primarykey</Type>
+              <Name>fg_equipmentid</Name>
+              <LogicalName>fg_equipmentid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+            </attribute>
+            <!-- Equipment Name -->
+            <attribute PhysicalName="fg_equipmentname">
+              <Type>nvarchar</Type>
+              <Name>fg_equipmentname</Name>
+              <LogicalName>fg_equipmentname</LogicalName>
+              <MaxLength>100</MaxLength>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Equipment Name" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Category (Choice) -->
+            <attribute PhysicalName="fg_category">
+              <Type>picklist</Type>
+              <Name>fg_category</Name>
+              <LogicalName>fg_category</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Category" languagecode="1033" />
+              </LocalizedNames>
+              <optionset>
+                <options>
+                  <option value="100000000"><Labels><Label description="Protective Gear" languagecode="1033" /></Labels></option>
+                  <option value="100000001"><Labels><Label description="Breathing Apparatus" languagecode="1033" /></Labels></option>
+                  <option value="100000002"><Labels><Label description="Uniform" languagecode="1033" /></Labels></option>
+                  <option value="100000003"><Labels><Label description="Tool" languagecode="1033" /></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+            <!-- Total Units -->
+            <attribute PhysicalName="fg_totalunits">
+              <Type>integer</Type>
+              <Name>fg_totalunits</Name>
+              <LogicalName>fg_totalunits</LogicalName>
+              <MinValue>0</MinValue>
+              <MaxValue>2147483647</MaxValue>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Total Units" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Available Units -->
+            <attribute PhysicalName="fg_availableunits">
+              <Type>integer</Type>
+              <Name>fg_availableunits</Name>
+              <LogicalName>fg_availableunits</LogicalName>
+              <MinValue>0</MinValue>
+              <MaxValue>2147483647</MaxValue>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Available Units" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Reorder Threshold -->
+            <attribute PhysicalName="fg_reorderthreshold">
+              <Type>integer</Type>
+              <Name>fg_reorderthreshold</Name>
+              <LogicalName>fg_reorderthreshold</LogicalName>
+              <MinValue>0</MinValue>
+              <MaxValue>2147483647</MaxValue>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Reorder Threshold" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Notes -->
+            <attribute PhysicalName="fg_notes">
+              <Type>memo</Type>
+              <Name>fg_notes</Name>
+              <LogicalName>fg_notes</LogicalName>
+              <MaxLength>2000</MaxLength>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Notes" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ============================================================ -->
+    <!-- TABLE 3: Equipment Assignment                                 -->
+    <!-- ============================================================ -->
+    <Entity>
+      <Name LocalizedName="Equipment Assignment" OriginalName="Equipment Assignment">fg_assignment</Name>
+      <EntityInfo>
+        <entity Name="fg_assignment">
+          <LocalizedNames>
+            <LocalizedName description="Equipment Assignment" languagecode="1033" />
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Equipment Assignments" languagecode="1033" />
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="fg_assignmentid">
+              <Type>primarykey</Type>
+              <Name>fg_assignmentid</Name>
+              <LogicalName>fg_assignmentid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+            </attribute>
+            <!-- FK: Firefighter -->
+            <attribute PhysicalName="fg_firefighterid">
+              <Type>lookup</Type>
+              <Name>fg_firefighterid</Name>
+              <LogicalName>fg_firefighterid</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <targets>fg_firefighter</targets>
+              <LocalizedNames>
+                <LocalizedName description="Firefighter" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- FK: Equipment -->
+            <attribute PhysicalName="fg_equipmentid">
+              <Type>lookup</Type>
+              <Name>fg_equipmentid</Name>
+              <LogicalName>fg_equipmentid</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <targets>fg_equipment</targets>
+              <LocalizedNames>
+                <LocalizedName description="Equipment" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Quantity -->
+            <attribute PhysicalName="fg_quantity">
+              <Type>integer</Type>
+              <Name>fg_quantity</Name>
+              <LogicalName>fg_quantity</LogicalName>
+              <MinValue>1</MinValue>
+              <MaxValue>2147483647</MaxValue>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Quantity" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Date Assigned -->
+            <attribute PhysicalName="fg_dateassigned">
+              <Type>datetime</Type>
+              <Name>fg_dateassigned</Name>
+              <LogicalName>fg_dateassigned</LogicalName>
+              <Format>DateOnly</Format>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Date Assigned" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Date Returned -->
+            <attribute PhysicalName="fg_datereturned">
+              <Type>datetime</Type>
+              <Name>fg_datereturned</Name>
+              <LogicalName>fg_datereturned</LogicalName>
+              <Format>DateOnly</Format>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Date Returned" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Status -->
+            <attribute PhysicalName="fg_status">
+              <Type>picklist</Type>
+              <Name>fg_status</Name>
+              <LogicalName>fg_status</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Status" languagecode="1033" />
+              </LocalizedNames>
+              <optionset>
+                <options>
+                  <option value="100000000"><Labels><Label description="Active" languagecode="1033" /></Labels></option>
+                  <option value="100000001"><Labels><Label description="Returned" languagecode="1033" /></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+    <!-- ============================================================ -->
+    <!-- TABLE 4: Equipment Request                                    -->
+    <!-- ============================================================ -->
+    <Entity>
+      <Name LocalizedName="Equipment Request" OriginalName="Equipment Request">fg_request</Name>
+      <EntityInfo>
+        <entity Name="fg_request">
+          <LocalizedNames>
+            <LocalizedName description="Equipment Request" languagecode="1033" />
+          </LocalizedNames>
+          <LocalizedCollectionNames>
+            <LocalizedCollectionName description="Equipment Requests" languagecode="1033" />
+          </LocalizedCollectionNames>
+          <attributes>
+            <attribute PhysicalName="fg_requestid">
+              <Type>primarykey</Type>
+              <Name>fg_requestid</Name>
+              <LogicalName>fg_requestid</LogicalName>
+              <RequiredLevel>systemrequired</RequiredLevel>
+            </attribute>
+            <!-- FK: Firefighter (requester) -->
+            <attribute PhysicalName="fg_firefighterid">
+              <Type>lookup</Type>
+              <Name>fg_firefighterid</Name>
+              <LogicalName>fg_firefighterid</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <targets>fg_firefighter</targets>
+              <LocalizedNames>
+                <LocalizedName description="Firefighter" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- FK: Equipment -->
+            <attribute PhysicalName="fg_equipmentid">
+              <Type>lookup</Type>
+              <Name>fg_equipmentid</Name>
+              <LogicalName>fg_equipmentid</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <targets>fg_equipment</targets>
+              <LocalizedNames>
+                <LocalizedName description="Equipment" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Quantity Requested -->
+            <attribute PhysicalName="fg_quantityrequested">
+              <Type>integer</Type>
+              <Name>fg_quantityrequested</Name>
+              <LogicalName>fg_quantityrequested</LogicalName>
+              <MinValue>1</MinValue>
+              <MaxValue>100</MaxValue>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Quantity Requested" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Justification (mandatory) -->
+            <attribute PhysicalName="fg_justification">
+              <Type>memo</Type>
+              <Name>fg_justification</Name>
+              <LogicalName>fg_justification</LogicalName>
+              <MaxLength>2000</MaxLength>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Justification" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Status -->
+            <attribute PhysicalName="fg_status">
+              <Type>picklist</Type>
+              <Name>fg_status</Name>
+              <LogicalName>fg_status</LogicalName>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Status" languagecode="1033" />
+              </LocalizedNames>
+              <optionset>
+                <options>
+                  <option value="100000000"><Labels><Label description="Pending" languagecode="1033" /></Labels></option>
+                  <option value="100000001"><Labels><Label description="Approved" languagecode="1033" /></Labels></option>
+                  <option value="100000002"><Labels><Label description="Rejected" languagecode="1033" /></Labels></option>
+                  <option value="100000003"><Labels><Label description="Cancelled" languagecode="1033" /></Labels></option>
+                </options>
+              </optionset>
+            </attribute>
+            <!-- Request Date -->
+            <attribute PhysicalName="fg_requestdate">
+              <Type>datetime</Type>
+              <Name>fg_requestdate</Name>
+              <LogicalName>fg_requestdate</LogicalName>
+              <Format>DateAndTime</Format>
+              <RequiredLevel>required</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Request Date" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Decision Date -->
+            <attribute PhysicalName="fg_decisiondate">
+              <Type>datetime</Type>
+              <Name>fg_decisiondate</Name>
+              <LogicalName>fg_decisiondate</LogicalName>
+              <Format>DateAndTime</Format>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Decision Date" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- Captain Notes -->
+            <attribute PhysicalName="fg_captainnotes">
+              <Type>memo</Type>
+              <Name>fg_captainnotes</Name>
+              <LogicalName>fg_captainnotes</LogicalName>
+              <MaxLength>2000</MaxLength>
+              <RequiredLevel>none</RequiredLevel>
+              <LocalizedNames>
+                <LocalizedName description="Captain Notes" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+            <!-- FK: Captain (approver) -->
+            <attribute PhysicalName="fg_captainid">
+              <Type>lookup</Type>
+              <Name>fg_captainid</Name>
+              <LogicalName>fg_captainid</LogicalName>
+              <RequiredLevel>none</RequiredLevel>
+              <targets>fg_firefighter</targets>
+              <LocalizedNames>
+                <LocalizedName description="Approved/Rejected By" languagecode="1033" />
+              </LocalizedNames>
+            </attribute>
+          </attributes>
+        </entity>
+      </EntityInfo>
+    </Entity>
+
+  </Entities>
+</ImportExportXml>

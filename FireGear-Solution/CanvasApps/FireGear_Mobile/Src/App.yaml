@@ -1,0 +1,29 @@
+- Control: App
+  Name: App1
+  Properties:
+    OnStart: |-
+      =// Identify the current user from the Firefighter table
+      Set(
+        gCurrentUser,
+        LookUp(
+          fg_firefighters,
+          fg_email = User().Email && fg_status = 'fg_firefighter (fg_status)'.Active
+        )
+      );
+      Set(gUserRole, gCurrentUser.fg_role);
+      // Pre-load the equipment catalogue for request dropdowns
+      ClearCollect(colEquipment, fg_equipment);
+      // Pre-load this user's assigned equipment
+      ClearCollect(
+        colMyEquipment,
+        Filter(fg_assignments, fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid && fg_status = 'fg_assignment (fg_status)'.Active)
+      );
+      // Pre-load this user's requests
+      ClearCollect(
+        colMyRequests,
+        Sort(
+          Filter(fg_requests, fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid),
+          fg_requestdate, SortOrder.Descending
+        )
+      )
+    StartScreen: =HomeScreen

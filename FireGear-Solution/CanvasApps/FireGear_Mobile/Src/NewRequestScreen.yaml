@@ -1,0 +1,270 @@
+- Control: Screen
+  Name: NewRequestScreen
+  Properties:
+    Fill: =RGBA(26, 26, 26, 1)
+    OnVisible: |-
+      =Set(gSelectedEquipment, Blank());
+      Set(gQuantity, 1);
+      Set(gJustification, "");
+      Set(gShowValidation, false)
+
+  Children:
+
+  # ── Header ───────────────────────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectHeader
+    Properties:
+      Fill: =RGBA(180, 20, 20, 1)
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =80
+
+  - Control: Button
+    Name: btnBack
+    Properties:
+      Text: ="← Back"
+      X: =8
+      Y: =20
+      Width: =90
+      Height: =40
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      FontWeight: =FontWeight.Semibold
+      OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)
+
+  - Control: Label
+    Name: lblScreenTitle
+    Properties:
+      Text: ="New Equipment Request"
+      X: =0
+      Y: =20
+      Width: =Parent.Width
+      Height: =40
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =18
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+
+  # ── Form container ────────────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectForm
+    Properties:
+      Fill: =RGBA(35, 35, 35, 1)
+      X: =16
+      Y: =100
+      Width: =Parent.Width - 32
+      Height: =520
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+
+  # ── Equipment type dropdown ────────────────────────────────────────────────
+  - Control: Label
+    Name: lblEquipmentLabel
+    Properties:
+      Text: ="Equipment Type *"
+      X: =32
+      Y: =120
+      Width: =Parent.Width - 64
+      Height: =24
+      Color: =RGBA(200, 200, 200, 1)
+      Size: =14
+      FontWeight: =FontWeight.Semibold
+
+  - Control: ComboBox
+    Name: cmbEquipment
+    Properties:
+      Items: =fg_equipment
+      SearchField: ="fg_equipmentname"
+      DisplayFields: =["fg_equipmentname"]
+      SelectMultiple: =false
+      X: =32
+      Y: =148
+      Width: =Parent.Width - 64
+      Height: =48
+      BorderColor: =If(gShowValidation && IsBlank(gSelectedEquipment), RGBA(220, 50, 50, 1), RGBA(80, 80, 80, 1))
+      BorderThickness: =2
+      Color: =RGBA(255, 255, 255, 1)
+      Fill: =RGBA(50, 50, 50, 1)
+      OnChange: =Set(gSelectedEquipment, cmbEquipment.Selected)
+
+  - Control: Label
+    Name: lblEquipmentError
+    Properties:
+      Text: ="Please select an equipment type."
+      X: =32
+      Y: =200
+      Width: =Parent.Width - 64
+      Height: =20
+      Color: =RGBA(220, 80, 80, 1)
+      Size: =12
+      Visible: =gShowValidation && IsBlank(gSelectedEquipment)
+
+  # ── Quantity slider / input ────────────────────────────────────────────────
+  - Control: Label
+    Name: lblQuantityLabel
+    Properties:
+      Text: ="Quantity *"
+      X: =32
+      Y: =228
+      Width: =Parent.Width - 64
+      Height: =24
+      Color: =RGBA(200, 200, 200, 1)
+      Size: =14
+      FontWeight: =FontWeight.Semibold
+
+  - Control: Slider
+    Name: sldQuantity
+    Properties:
+      Min: =1
+      Max: =20
+      Default: =1
+      X: =32
+      Y: =258
+      Width: =Parent.Width - 120
+      Height: =36
+      ValueColor: =RGBA(180, 20, 20, 1)
+      RailColor: =RGBA(80, 80, 80, 1)
+      HandleColor: =RGBA(180, 20, 20, 1)
+      OnChange: =Set(gQuantity, Round(sldQuantity.Value, 0))
+
+  - Control: Label
+    Name: lblQuantityValue
+    Properties:
+      Text: =Text(Round(sldQuantity.Value, 0))
+      X: =Parent.Width - 80
+      Y: =258
+      Width: =50
+      Height: =36
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+
+  # ── Justification (mandatory) ─────────────────────────────────────────────
+  - Control: Label
+    Name: lblJustificationLabel
+    Properties:
+      Text: ="Justification (required) *"
+      X: =32
+      Y: =312
+      Width: =Parent.Width - 64
+      Height: =24
+      Color: =RGBA(200, 200, 200, 1)
+      Size: =14
+      FontWeight: =FontWeight.Semibold
+
+  - Control: TextInput
+    Name: txtJustification
+    Properties:
+      HintText: ="Describe why you need this equipment (e.g. helmet damaged during last intervention)…"
+      Mode: =TextMode.MultiLine
+      X: =32
+      Y: =340
+      Width: =Parent.Width - 64
+      Height: =180
+      BorderColor: =If(gShowValidation && Len(Trim(txtJustification.Text)) = 0, RGBA(220, 50, 50, 1), RGBA(80, 80, 80, 1))
+      BorderThickness: =2
+      Color: =RGBA(255, 255, 255, 1)
+      Fill: =RGBA(50, 50, 50, 1)
+      OnChange: =Set(gJustification, txtJustification.Text)
+
+  - Control: Label
+    Name: lblJustificationError
+    Properties:
+      Text: ="A justification is required."
+      X: =32
+      Y: =524
+      Width: =Parent.Width - 64
+      Height: =20
+      Color: =RGBA(220, 80, 80, 1)
+      Size: =12
+      Visible: =gShowValidation && Len(Trim(txtJustification.Text)) = 0
+
+  # ── Available stock hint ──────────────────────────────────────────────────
+  - Control: Label
+    Name: lblStockHint
+    Properties:
+      Text: =If(
+        !IsBlank(gSelectedEquipment),
+        "Available stock: " & Text(gSelectedEquipment.fg_availableunits) & " units",
+        ""
+      )
+      X: =32
+      Y: =556
+      Width: =Parent.Width - 64
+      Height: =24
+      Color: =If(
+        !IsBlank(gSelectedEquipment) && gSelectedEquipment.fg_availableunits = 0,
+        RGBA(220, 80, 80, 1),
+        RGBA(100, 180, 100, 1)
+      )
+      Size: =13
+
+  # ── Action buttons ────────────────────────────────────────────────────────
+  - Control: Button
+    Name: btnSubmit
+    Properties:
+      Text: ="Submit Request"
+      X: =20
+      Y: =Parent.Height - 140
+      Width: =Parent.Width - 40
+      Height: =52
+      Fill: =RGBA(180, 20, 20, 1)
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      RadiusTopLeft: =26
+      RadiusTopRight: =26
+      RadiusBottomLeft: =26
+      RadiusBottomRight: =26
+      Size: =16
+      FontWeight: =FontWeight.Semibold
+      OnSelect: |-
+        =Set(gShowValidation, true);
+        If(
+          IsBlank(gSelectedEquipment) || Len(Trim(txtJustification.Text)) = 0,
+          // Validation failed — stay on screen
+          false,
+          // Create the request record
+          Patch(
+            fg_requests,
+            Defaults(fg_requests),
+            {
+              fg_firefighterid: gCurrentUser,
+              fg_equipmentid:   gSelectedEquipment,
+              fg_quantityrequested: Round(sldQuantity.Value, 0),
+              fg_justification: Trim(txtJustification.Text),
+              fg_status: 'fg_request (fg_status)'.Pending,
+              fg_requestdate: Now()
+            }
+          );
+          // Refresh local collection and go to status screen
+          ClearCollect(colMyRequests,
+            Sort(
+              Filter(fg_requests, fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid),
+              fg_requestdate, SortOrder.Descending
+            )
+          );
+          Set(gShowValidation, false);
+          Navigate(RequestStatusScreen, ScreenTransition.Fade)
+        )
+
+  - Control: Button
+    Name: btnCancel
+    Properties:
+      Text: ="Cancel"
+      X: =20
+      Y: =Parent.Height - 80
+      Width: =Parent.Width - 40
+      Height: =44
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(160, 160, 160, 1)
+      BorderColor: =RGBA(60, 60, 60, 1)
+      RadiusTopLeft: =22
+      RadiusTopRight: =22
+      RadiusBottomLeft: =22
+      RadiusBottomRight: =22
+      OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)

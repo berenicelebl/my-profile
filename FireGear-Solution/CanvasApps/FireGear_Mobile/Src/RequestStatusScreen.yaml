@@ -1,0 +1,247 @@
+- Control: Screen
+  Name: RequestStatusScreen
+  Properties:
+    Fill: =RGBA(26, 26, 26, 1)
+    OnVisible: |-
+      =ClearCollect(colMyRequests,
+        Sort(
+          Filter(fg_requests, fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid),
+          fg_requestdate, SortOrder.Descending
+        )
+      )
+
+  Children:
+
+  # ── Header ───────────────────────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectHeader
+    Properties:
+      Fill: =RGBA(180, 20, 20, 1)
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =80
+
+  - Control: Button
+    Name: btnBack
+    Properties:
+      Text: ="← Back"
+      X: =8
+      Y: =20
+      Width: =90
+      Height: =40
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      FontWeight: =FontWeight.Semibold
+      OnSelect: =Navigate(HomeScreen, ScreenTransition.Fade)
+
+  - Control: Label
+    Name: lblScreenTitle
+    Properties:
+      Text: ="My Requests"
+      X: =0
+      Y: =20
+      Width: =Parent.Width
+      Height: =40
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =20
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+
+  # ── Filter tabs ────────────────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectTabBg
+    Properties:
+      Fill: =RGBA(35, 35, 35, 1)
+      X: =0
+      Y: =80
+      Width: =Parent.Width
+      Height: =52
+
+  - Control: Button
+    Name: btnTabAll
+    Properties:
+      Text: ="All (" & Text(CountRows(colMyRequests)) & ")"
+      X: =8
+      Y: =88
+      Width: =(Parent.Width - 24) / 3
+      Height: =36
+      Fill: =If(gStatusFilter = "All", RGBA(180, 20, 20, 1), RGBA(50, 50, 50, 1))
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      RadiusTopLeft: =18
+      RadiusTopRight: =18
+      RadiusBottomLeft: =18
+      RadiusBottomRight: =18
+      Size: =13
+      OnSelect: =Set(gStatusFilter, "All")
+
+  - Control: Button
+    Name: btnTabPending
+    Properties:
+      Text: ="Pending (" & Text(CountRows(Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending))) & ")"
+      X: =8 + (Parent.Width - 24) / 3 + 4
+      Y: =88
+      Width: =(Parent.Width - 24) / 3
+      Height: =36
+      Fill: =If(gStatusFilter = "Pending", RGBA(180, 20, 20, 1), RGBA(50, 50, 50, 1))
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      RadiusTopLeft: =18
+      RadiusTopRight: =18
+      RadiusBottomLeft: =18
+      RadiusBottomRight: =18
+      Size: =13
+      OnSelect: =Set(gStatusFilter, "Pending")
+
+  - Control: Button
+    Name: btnTabClosed
+    Properties:
+      Text: ="Closed"
+      X: =8 + 2 * ((Parent.Width - 24) / 3 + 4)
+      Y: =88
+      Width: =(Parent.Width - 24) / 3
+      Height: =36
+      Fill: =If(gStatusFilter = "Closed", RGBA(180, 20, 20, 1), RGBA(50, 50, 50, 1))
+      Color: =RGBA(255, 255, 255, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      RadiusTopLeft: =18
+      RadiusTopRight: =18
+      RadiusBottomLeft: =18
+      RadiusBottomRight: =18
+      Size: =13
+      OnSelect: =Set(gStatusFilter, "Closed")
+
+  # ── Empty state ───────────────────────────────────────────────────────────
+  - Control: Label
+    Name: lblEmpty
+    Properties:
+      Text: ="No requests found."
+      X: =20
+      Y: =180
+      Width: =Parent.Width - 40
+      Height: =40
+      Color: =RGBA(150, 150, 150, 1)
+      Size: =15
+      Align: =Align.Center
+      Visible: =CountRows(galRequests.AllItems) = 0
+
+  # ── Request gallery ───────────────────────────────────────────────────────
+  - Control: Gallery
+    Name: galRequests
+    Variant: galleryVertical
+    Properties:
+      Items: |-
+        =If(
+          gStatusFilter = "All",
+          colMyRequests,
+          If(
+            gStatusFilter = "Pending",
+            Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending),
+            Filter(colMyRequests, fg_status <> 'fg_request (fg_status)'.Pending)
+          )
+        )
+      X: =0
+      Y: =140
+      Width: =Parent.Width
+      Height: =Parent.Height - 140
+      TemplatePadding: =8
+      TemplateSize: =120
+    Children:
+    - Control: Rectangle
+      Name: rectCard
+      Properties:
+        Fill: =RGBA(38, 38, 38, 1)
+        X: =16
+        Y: =4
+        Width: =Parent.Width - 32
+        Height: =108
+        RadiusTopLeft: =10
+        RadiusTopRight: =10
+        RadiusBottomLeft: =10
+        RadiusBottomRight: =10
+
+    # Status colour strip on left edge
+    - Control: Rectangle
+      Name: rectStatusStrip
+      Properties:
+        Fill: =Switch(
+          ThisItem.fg_status,
+          'fg_request (fg_status)'.Pending,  RGBA(255, 180, 0, 1),
+          'fg_request (fg_status)'.Approved, RGBA(50, 200, 80, 1),
+          'fg_request (fg_status)'.Rejected, RGBA(220, 50, 50, 1),
+          RGBA(120, 120, 120, 1)
+        )
+        X: =16
+        Y: =4
+        Width: =6
+        Height: =108
+        RadiusTopLeft: =10
+        RadiusBottomLeft: =10
+
+    - Control: Label
+      Name: lblEquipmentName
+      Properties:
+        Text: =ThisItem.fg_equipmentid.fg_equipmentname
+        X: =36
+        Y: =14
+        Width: =Parent.Width - 130
+        Height: =26
+        Color: =RGBA(255, 255, 255, 1)
+        Size: =15
+        FontWeight: =FontWeight.Semibold
+
+    - Control: Label
+      Name: lblStatusBadge
+      Properties:
+        Text: =Text(ThisItem.fg_status)
+        X: =Parent.Width - 110
+        Y: =14
+        Width: =90
+        Height: =26
+        Color: =Switch(
+          ThisItem.fg_status,
+          'fg_request (fg_status)'.Pending,  RGBA(255, 180, 0, 1),
+          'fg_request (fg_status)'.Approved, RGBA(50, 200, 80, 1),
+          'fg_request (fg_status)'.Rejected, RGBA(220, 50, 50, 1),
+          RGBA(160, 160, 160, 1)
+        )
+        Size: =13
+        FontWeight: =FontWeight.Semibold
+        Align: =Align.Right
+
+    - Control: Label
+      Name: lblQtyDate
+      Properties:
+        Text: ="Qty: " & Text(ThisItem.fg_quantityrequested) & "  ·  " & Text(ThisItem.fg_requestdate, DateTimeFormat.ShortDate)
+        X: =36
+        Y: =44
+        Width: =Parent.Width - 64
+        Height: =20
+        Color: =RGBA(160, 160, 160, 1)
+        Size: =12
+
+    - Control: Label
+      Name: lblJustificationPreview
+      Properties:
+        Text: =Left(ThisItem.fg_justification, 80) & If(Len(ThisItem.fg_justification) > 80, "…", "")
+        X: =36
+        Y: =66
+        Width: =Parent.Width - 64
+        Height: =36
+        Color: =RGBA(180, 180, 180, 1)
+        Size: =12
+
+    # Captain note (only shown when rejected)
+    - Control: Label
+      Name: lblCaptainNote
+      Properties:
+        Text: ="Captain: " & ThisItem.fg_captainnotes
+        X: =36
+        Y: =90
+        Width: =Parent.Width - 64
+        Height: =20
+        Color: =RGBA(220, 100, 100, 1)
+        Size: =11
+        Visible: =ThisItem.fg_status = 'fg_request (fg_status)'.Rejected && !IsBlank(ThisItem.fg_captainnotes)

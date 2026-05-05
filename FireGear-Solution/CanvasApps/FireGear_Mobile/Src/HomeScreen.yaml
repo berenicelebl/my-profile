@@ -1,0 +1,263 @@
+- Control: Screen
+  Name: HomeScreen
+  Properties:
+    Fill: =RGBA(26, 26, 26, 1)
+
+  Children:
+
+  # ── Header bar ──────────────────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectHeader
+    Properties:
+      Fill: =RGBA(180, 20, 20, 1)
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =80
+
+  - Control: Label
+    Name: lblAppName
+    Properties:
+      Text: ="🔥 FireGear"
+      X: =20
+      Y: =18
+      Width: =200
+      Height: =44
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =24
+      FontWeight: =FontWeight.Bold
+
+  - Control: Label
+    Name: lblUserGreeting
+    Properties:
+      Text: =If(IsBlank(gCurrentUser), "Welcome", "Hello, " & gCurrentUser.fg_fullname)
+      X: =Parent.Width - 210
+      Y: =22
+      Width: =200
+      Height: =36
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =13
+      Align: =Align.Right
+
+  # ── Section title ────────────────────────────────────────────────────────────
+  - Control: Label
+    Name: lblSectionTitle
+    Properties:
+      Text: ="What do you need?"
+      X: =20
+      Y: =108
+      Width: =Parent.Width - 40
+      Height: =32
+      Color: =RGBA(200, 200, 200, 1)
+      Size: =16
+      FontWeight: =FontWeight.Semibold
+
+  # ── Nav tile: My Equipment ──────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectTileEquipment
+    Properties:
+      Fill: =RGBA(40, 40, 40, 1)
+      X: =20
+      Y: =156
+      Width: =(Parent.Width - 52) / 2
+      Height: =140
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      OnSelect: =Navigate(MyEquipmentScreen, ScreenTransition.Fade)
+
+  - Control: Label
+    Name: lblIconEquipment
+    Properties:
+      Text: ="🪖"
+      X: =20
+      Y: =172
+      Width: =(Parent.Width - 52) / 2
+      Height: =60
+      Size: =40
+      Align: =Align.Center
+
+  - Control: Label
+    Name: lblTileEquipment
+    Properties:
+      Text: ="My Equipment"
+      X: =20
+      Y: =236
+      Width: =(Parent.Width - 52) / 2
+      Height: =32
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =15
+      FontWeight: =FontWeight.Semibold
+      Align: =Align.Center
+
+  - Control: Label
+    Name: lblTileEquipmentSub
+    Properties:
+      Text: =Text(CountRows(colMyEquipment)) & " items assigned"
+      X: =20
+      Y: =268
+      Width: =(Parent.Width - 52) / 2
+      Height: =24
+      Color: =RGBA(160, 160, 160, 1)
+      Size: =12
+      Align: =Align.Center
+
+  # ── Nav tile: New Request ───────────────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectTileRequest
+    Properties:
+      Fill: =RGBA(40, 40, 40, 1)
+      X: =Parent.Width - (Parent.Width - 52) / 2 - 20
+      Y: =156
+      Width: =(Parent.Width - 52) / 2
+      Height: =140
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      OnSelect: =Navigate(NewRequestScreen, ScreenTransition.Fade)
+
+  - Control: Label
+    Name: lblIconRequest
+    Properties:
+      Text: ="➕"
+      X: =Parent.Width - (Parent.Width - 52) / 2 - 20
+      Y: =172
+      Width: =(Parent.Width - 52) / 2
+      Height: =60
+      Size: =40
+      Align: =Align.Center
+
+  - Control: Label
+    Name: lblTileRequest
+    Properties:
+      Text: ="New Request"
+      X: =Parent.Width - (Parent.Width - 52) / 2 - 20
+      Y: =236
+      Width: =(Parent.Width - 52) / 2
+      Height: =32
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =15
+      FontWeight: =FontWeight.Semibold
+      Align: =Align.Center
+
+  - Control: Label
+    Name: lblTileRequestSub
+    Properties:
+      Text: ="Request gear"
+      X: =Parent.Width - (Parent.Width - 52) / 2 - 20
+      Y: =268
+      Width: =(Parent.Width - 52) / 2
+      Height: =24
+      Color: =RGBA(160, 160, 160, 1)
+      Size: =12
+      Align: =Align.Center
+
+  # ── Nav tile: My Requests (full width) ─────────────────────────────────────
+  - Control: Rectangle
+    Name: rectTileStatus
+    Properties:
+      Fill: =RGBA(40, 40, 40, 1)
+      X: =20
+      Y: =316
+      Width: =Parent.Width - 40
+      Height: =100
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      OnSelect: =Navigate(RequestStatusScreen, ScreenTransition.Fade)
+
+  - Control: Label
+    Name: lblIconStatus
+    Properties:
+      Text: ="📋"
+      X: =28
+      Y: =336
+      Width: =60
+      Height: =60
+      Size: =36
+      Align: =Align.Center
+
+  - Control: Label
+    Name: lblTileStatus
+    Properties:
+      Text: ="My Requests"
+      X: =96
+      Y: =336
+      Width: =200
+      Height: =28
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =16
+      FontWeight: =FontWeight.Semibold
+
+  - Control: Label
+    Name: lblTileStatusSub
+    Properties:
+      Text: =Text(CountRows(Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending))) & " pending · " & Text(CountRows(colMyRequests)) & " total"
+      X: =96
+      Y: =368
+      Width: =Parent.Width - 120
+      Height: =24
+      Color: =RGBA(160, 160, 160, 1)
+      Size: =12
+
+  # ── Pending badge on status tile ─────────────────────────────────────────
+  - Control: Rectangle
+    Name: rectPendingBadge
+    Properties:
+      Fill: =RGBA(180, 20, 20, 1)
+      X: =Parent.Width - 60
+      Y: =326
+      Width: =36
+      Height: =36
+      RadiusTopLeft: =18
+      RadiusTopRight: =18
+      RadiusBottomLeft: =18
+      RadiusBottomRight: =18
+      Visible: =CountRows(Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending)) > 0
+
+  - Control: Label
+    Name: lblPendingCount
+    Properties:
+      Text: =Text(CountRows(Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending)))
+      X: =Parent.Width - 60
+      Y: =326
+      Width: =36
+      Height: =36
+      Color: =RGBA(255, 255, 255, 1)
+      Size: =14
+      FontWeight: =FontWeight.Bold
+      Align: =Align.Center
+      Visible: =CountRows(Filter(colMyRequests, fg_status = 'fg_request (fg_status)'.Pending)) > 0
+
+  # ── Refresh button ───────────────────────────────────────────────────────
+  - Control: Button
+    Name: btnRefresh
+    Properties:
+      Text: ="Refresh"
+      X: =Parent.Width / 2 - 60
+      Y: =Parent.Height - 80
+      Width: =120
+      Height: =44
+      Fill: =RGBA(60, 60, 60, 1)
+      Color: =RGBA(200, 200, 200, 1)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      RadiusTopLeft: =22
+      RadiusTopRight: =22
+      RadiusBottomLeft: =22
+      RadiusBottomRight: =22
+      OnSelect: |-
+        =ClearCollect(colMyEquipment,
+          Filter(fg_assignments,
+            fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid
+            && fg_status = 'fg_assignment (fg_status)'.Active
+          )
+        );
+        ClearCollect(colMyRequests,
+          Sort(
+            Filter(fg_requests, fg_firefighterid.fg_firefighterid = gCurrentUser.fg_firefighterid),
+            fg_requestdate, SortOrder.Descending
+          )
+        )

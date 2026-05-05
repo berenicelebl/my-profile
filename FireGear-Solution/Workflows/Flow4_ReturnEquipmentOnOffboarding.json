@@ -1,0 +1,165 @@
+{
+  "name": "fg_ReturnEquipmentOnOffboarding",
+  "properties": {
+    "displayName": "FireGear – Return Equipment on Offboarding",
+    "description": "Triggered when a firefighter status changes to Off-boarded. Batch-returns all active assignments to stock, cancels all pending requests, and sends the admin a summary.",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "triggers": {
+        "When_a_row_is_modified": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/entityname": "fg_firefighter",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "fg_status"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Condition_Is_Offboarded": {
+          "type": "If",
+          "expression": {
+            "equals": [
+              "@triggerOutputs()?['body/fg_status']",
+              100000001
+            ]
+          },
+          "actions": {
+            "List_active_assignments": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "fg_assignments",
+                  "$filter": "_fg_firefighterid_value eq @{triggerOutputs()?['body/fg_firefighterid']} and fg_status eq 100000000",
+                  "$expand": "fg_equipmentid($select=fg_availableunits,fg_equipmentname)"
+                }
+              },
+              "runAfter": {}
+            },
+            "List_pending_requests": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "fg_requests",
+                  "$filter": "_fg_firefighterid_value eq @{triggerOutputs()?['body/fg_firefighterid']} and fg_status eq 100000000"
+                }
+              },
+              "runAfter": {}
+            },
+            "Return_each_assignment": {
+              "type": "Foreach",
+              "foreach": "@outputs('List_active_assignments')?['body/value']",
+              "actions": {
+                "Mark_assignment_returned": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "fg_assignments",
+                      "recordId": "@{items('Return_each_assignment')?['fg_assignmentid']}",
+                      "item/fg_status": 100000001,
+                      "item/fg_datereturned": "@{utcNow()}"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Restore_available_units": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "fg_equipment",
+                      "recordId": "@{items('Return_each_assignment')?['fg_equipmentid']}",
+                      "item/fg_availableunits": "@{add(items('Return_each_assignment')?['fg_equipmentid/fg_availableunits'], items('Return_each_assignment')?['fg_quantity'])}"
+                    }
+                  },
+                  "runAfter": {
+                    "Mark_assignment_returned": ["Succeeded"]
+                  }
+                }
+              },
+              "runAfter": {
+                "List_active_assignments": ["Succeeded"]
+              }
+            },
+            "Cancel_each_pending_request": {
+              "type": "Foreach",
+              "foreach": "@outputs('List_pending_requests')?['body/value']",
+              "actions": {
+                "Cancel_request": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "fg_requests",
+                      "recordId": "@{items('Cancel_each_pending_request')?['fg_requestid']}",
+                      "item/fg_status": 100000003,
+                      "item/fg_captainnotes": "Automatically cancelled: firefighter off-boarded."
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "List_pending_requests": ["Succeeded"]
+              }
+            },
+            "Send_offboarding_summary_to_admin": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "parameters": {
+                  "emailMessage/To": "admin@firestation.local",
+                  "emailMessage/Subject": "[FireGear] Off-boarding complete – @{triggerOutputs()?['body/fg_fullname']}",
+                  "emailMessage/Body": "<p>The off-boarding process for <strong>@{triggerOutputs()?['body/fg_fullname']}</strong> (Badge: @{triggerOutputs()?['body/fg_badgenumber']}) has been completed.</p><ul><li><strong>Equipment assignments returned to stock:</strong> @{length(outputs('List_active_assignments')?['body/value'])}</li><li><strong>Pending requests cancelled:</strong> @{length(outputs('List_pending_requests')?['body/value'])}</li></ul><p>The firefighter account has been set to Off-boarded status and is no longer active in the system.</p><p>FireGear Inventory System</p>"
+                }
+              },
+              "runAfter": {
+                "Return_each_assignment": ["Succeeded"],
+                "Cancel_each_pending_request": ["Succeeded"]
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "CanvasManifest": {
+    "Permissions": {
+      "Connections": {
+        "shared_commondataserviceforapps": {
+          "connectionName": "shared_commondataserviceforapps",
+          "dataSources": {
+            "fg_firefighters":  "fg_firefighter",
+            "fg_equipment":     "fg_equipment",
+            "fg_assignments":   "fg_assignment",
+            "fg_requests":      "fg_request"
+          }
+        }
+      }
+    },
+    "Properties": {
+      "Name": "FireGear Mobile",
+      "Id":   "fg_FireGearMobile",
+      "DocumentLayoutWidth": 414,
+      "DocumentLayoutHeight": 896,
+      "DocumentLayoutOrientation": "portrait",
+      "DocumentLayoutScaleToFit": true
+    },
+    "PublishInfo": {
+      "AppVersion": "1.0.0",
+      "PublisherVersion": "3.24054.23"
+    }
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "name": "fg_UpdateInventoryOnApproval",
+  "properties": {
+    "displayName": "FireGear – Update Inventory & Assign on Approval",
+    "description": "Triggered when a request status changes to Approved. Decrements available stock, creates an assignment record, and notifies the firefighter.",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "triggers": {
+        "When_a_row_is_modified": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/entityname": "fg_request",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "fg_status"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Condition_Is_Approved": {
+          "type": "If",
+          "expression": {
+            "equals": [
+              "@triggerOutputs()?['body/fg_status']",
+              100000001
+            ]
+          },
+          "actions": {
+            "Get_Equipment_record": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "GetItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "fg_equipment",
+                  "recordId": "@{triggerOutputs()?['body/fg_equipmentid']}"
+                }
+              },
+              "runAfter": {}
+            },
+            "Check_sufficient_stock": {
+              "type": "If",
+              "expression": {
+                "greaterOrEquals": [
+                  "@outputs('Get_Equipment_record')?['body/fg_availableunits']",
+                  "@triggerOutputs()?['body/fg_quantityrequested']"
+                ]
+              },
+              "actions": {
+                "Decrement_available_units": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "fg_equipment",
+                      "recordId": "@{triggerOutputs()?['body/fg_equipmentid']}",
+                      "item/fg_availableunits": "@{sub(outputs('Get_Equipment_record')?['body/fg_availableunits'], triggerOutputs()?['body/fg_quantityrequested'])}"
+                    }
+                  },
+                  "runAfter": {}
+                },
+                "Create_assignment_record": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "fg_assignments",
+                      "item/fg_firefighterid@odata.bind": "/fg_firefighters(@{triggerOutputs()?['body/fg_firefighterid']})",
+                      "item/fg_equipmentid@odata.bind": "/fg_equipment(@{triggerOutputs()?['body/fg_equipmentid']})",
+                      "item/fg_quantity": "@triggerOutputs()?['body/fg_quantityrequested']",
+                      "item/fg_dateassigned": "@{utcNow()}",
+                      "item/fg_status": 100000000
+                    }
+                  },
+                  "runAfter": {
+                    "Decrement_available_units": ["Succeeded"]
+                  }
+                },
+                "Notify_firefighter_approved": {
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_office365",
+                      "operationId": "SendEmailV2",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                    },
+                    "parameters": {
+                      "emailMessage/To": "@{triggerOutputs()?['body/_fg_firefighterid_value@OData.Community.Display.V1.FormattedValue']}",
+                      "emailMessage/Subject": "[FireGear] ✅ Request Approved – @{outputs('Get_Equipment_record')?['body/fg_equipmentname']}",
+                      "emailMessage/Body": "<p>Great news! Your equipment request has been <strong>approved</strong>.</p><table><tr><td><strong>Equipment:</strong></td><td>@{outputs('Get_Equipment_record')?['body/fg_equipmentname']}</td></tr><tr><td><strong>Quantity:</strong></td><td>@{triggerOutputs()?['body/fg_quantityrequested']}</td></tr><tr><td><strong>Approved on:</strong></td><td>@{utcNow()}</td></tr></table><p>The item has been recorded as assigned to you. Please collect it from the station quartermaster.</p><p>FireGear Inventory System</p>"
+                    }
+                  },
+                  "runAfter": {
+                    "Create_assignment_record": ["Succeeded"]
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Revert_status_to_pending_insufficient_stock": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "entityName": "fg_requests",
+                        "recordId": "@{triggerOutputs()?['body/fg_requestid']}",
+                        "item/fg_status": 100000000,
+                        "item/fg_captainnotes": "Cannot approve: insufficient stock. Please restock the item first."
+                      }
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_Equipment_record": ["Succeeded"]
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {}
+        }
+      }
+    }
+  }
+}

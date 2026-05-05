@@ -1,0 +1,102 @@
+{
+  "name": "fg_NotifyFirefighterOnRejection",
+  "properties": {
+    "displayName": "FireGear – Notify Firefighter on Rejection",
+    "description": "Triggered when a request status changes to Rejected. Notifies the firefighter by email with any captain note.",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "triggers": {
+        "When_a_row_is_modified": {
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 3,
+              "subscriptionRequest/entityname": "fg_request",
+              "subscriptionRequest/scope": 4,
+              "subscriptionRequest/filteringattributes": "fg_status"
+            }
+          }
+        }
+      },
+      "actions": {
+        "Condition_Is_Rejected": {
+          "type": "If",
+          "expression": {
+            "equals": [
+              "@triggerOutputs()?['body/fg_status']",
+              100000002
+            ]
+          },
+          "actions": {
+            "Get_Firefighter_record": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "GetItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "fg_firefighters",
+                  "recordId": "@{triggerOutputs()?['body/fg_firefighterid']}"
+                }
+              },
+              "runAfter": {}
+            },
+            "Get_Equipment_record": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "GetItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "fg_equipment",
+                  "recordId": "@{triggerOutputs()?['body/fg_equipmentid']}"
+                }
+              },
+              "runAfter": {}
+            },
+            "Build_captain_note_section": {
+              "type": "Compose",
+              "inputs": "@if(empty(triggerOutputs()?['body/fg_captainnotes']), '', concat('<p><strong>Reason from Captain:</strong> ', triggerOutputs()?['body/fg_captainnotes'], '</p>'))",
+              "runAfter": {
+                "Get_Firefighter_record": ["Succeeded"],
+                "Get_Equipment_record": ["Succeeded"]
+              }
+            },
+            "Send_rejection_email": {
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_office365",
+                  "operationId": "SendEmailV2",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                },
+                "parameters": {
+                  "emailMessage/To": "@{outputs('Get_Firefighter_record')?['body/fg_email']}",
+                  "emailMessage/Subject": "[FireGear] ❌ Request Rejected – @{outputs('Get_Equipment_record')?['body/fg_equipmentname']}",
+                  "emailMessage/Body": "<p>Hello @{outputs('Get_Firefighter_record')?['body/fg_fullname']},</p><p>Unfortunately, your equipment request has been <strong>rejected</strong>.</p><table><tr><td><strong>Equipment:</strong></td><td>@{outputs('Get_Equipment_record')?['body/fg_equipmentname']}</td></tr><tr><td><strong>Quantity requested:</strong></td><td>@{triggerOutputs()?['body/fg_quantityrequested']}</td></tr><tr><td><strong>Decision date:</strong></td><td>@{utcNow()}</td></tr></table>@{outputs('Build_captain_note_section')}<p>If you have questions, please speak with your Captain.</p><p>FireGear Inventory System</p>"
+                }
+              },
+              "runAfter": {
+                "Build_captain_note_section": ["Succeeded"]
+              }
+            }
+          },
+          "else": {
+            "actions": {}
+          },
+          "runAfter": {}
+        }
+      }
+    }
+  }
+}

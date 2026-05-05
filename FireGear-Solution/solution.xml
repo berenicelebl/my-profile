@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.0.0.0031" SolutionPackageVersion="9.1" languagecode="1033" generatedBy="CrmLive"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SolutionManifest>
+    <UniqueName>FireGearInventorySystem</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="FireGear Inventory System" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Mendoza FireGear Inventory Management System for fire station equipment tracking." languagecode="1033" />
+    </Descriptions>
+    <Version>1.0.0.0</Version>
+    <Managed>0</Managed>
+    <Publisher>
+      <UniqueName>Mendoza</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="Mendoza" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions />
+      <EMailAddress />
+      <SupportingWebsiteUrl />
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City />
+          <County />
+          <Country />
+          <Fax />
+          <FreightTermsCode xsi:nil="true" />
+          <ImportSequenceNumber xsi:nil="true" />
+          <Latitude xsi:nil="true" />
+          <Line1 />
+          <Line2 />
+          <Line3 />
+          <Longitude xsi:nil="true" />
+          <Name />
+          <PostalCode />
+          <PostOfficeBox />
+          <PrimaryContactName />
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince />
+          <Telephone1 />
+          <Telephone2 />
+          <Telephone3 />
+          <TimeZoneRuleVersionNumber xsi:nil="true" />
+          <UPSZone />
+          <UTCOffset xsi:nil="true" />
+        </Address>
+      </Addresses>
+      <CustomizationPrefix>fg</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>10000</CustomizationOptionValuePrefix>
+    </Publisher>
+    <RootComponents>
+      <!-- Dataverse Tables -->
+      <RootComponent type="1" schemaName="fg_firefighter" behavior="0" />
+      <RootComponent type="1" schemaName="fg_equipment" behavior="0" />
+      <RootComponent type="1" schemaName="fg_assignment" behavior="0" />
+      <RootComponent type="1" schemaName="fg_request" behavior="0" />
+      <!-- Canvas App: FireGear Mobile -->
+      <RootComponent type="300" schemaName="fg_FireGearMobile" behavior="0" />
+      <!-- Power Automate Flows -->
+      <RootComponent type="29" schemaName="fg_NotifyCaptainOnRequest" behavior="0" />
+      <RootComponent type="29" schemaName="fg_UpdateInventoryOnApproval" behavior="0" />
+      <RootComponent type="29" schemaName="fg_NotifyFirefighterOnRejection" behavior="0" />
+      <RootComponent type="29" schemaName="fg_ReturnEquipmentOnOffboarding" behavior="0" />
+    </RootComponents>
+    <MissingDependencies />
+  </SolutionManifest>
+</ImportExportXml>
